@@ -71,6 +71,7 @@ client.once(Events.ClientReady, async (readyClient) => {
 });
 
 client.on(Events.MessageCreate, (message) => {
+  console.log(`[Event] MessageCreate from ${message.author.tag} | content: "${message.content.substring(0, 50)}" | guild: ${message.guild?.id}`);
   handleMessageCreate(message, queue);
 });
 
