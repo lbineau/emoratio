@@ -3,15 +3,15 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { getUserStats } from "../services/database.js";
-import { buildVibeCheckEmbed, buildNoDataEmbed } from "../utils/embeds.js";
+import { buildMoodCheckEmbed, buildNoDataEmbed } from "../utils/embeds.js";
 
 export const data = new SlashCommandBuilder()
-  .setName("vibecheck")
-  .setDescription("Check your (or someone's) vibe ratio")
+  .setName("moodcheck")
+  .setDescription("Vérifie ton ratio de mood (ou celui de quelqu'un)")
   .addUserOption((option) =>
     option
       .setName("user")
-      .setDescription("User to check (defaults to you)")
+      .setDescription("Utilisateur à vérifier (par défaut : toi)")
       .setRequired(false)
   );
 
@@ -20,7 +20,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   const guildId = interaction.guildId;
 
   if (!guildId) {
-    await interaction.reply({ content: "Only works in servers.", flags: 64 });
+    await interaction.reply({ content: "Fonctionne uniquement dans un serveur.", flags: 64 });
     return;
   }
 
@@ -31,5 +31,5 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     return;
   }
 
-  await interaction.reply({ embeds: [buildVibeCheckEmbed(target.id, stats)] });
+  await interaction.reply({ embeds: [buildMoodCheckEmbed(target.id, stats)] });
 }

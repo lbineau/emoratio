@@ -27,7 +27,7 @@ export interface UserStats {
   total_score: number;
 }
 
-export interface LeaderboardEntry {
+export interface MoodBoardEntry {
   user_id: string;
   positive_count: number;
   negative_count: number;

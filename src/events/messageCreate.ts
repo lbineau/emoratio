@@ -1,5 +1,5 @@
 import type { Message } from "discord.js";
-import { insertMessage, isFreeleech } from "../services/database.js";
+import { insertMessage, isFreerant } from "../services/database.js";
 import type { MessageQueue } from "../services/queue.js";
 
 const MIN_MESSAGE_LENGTH = 3;
@@ -22,8 +22,8 @@ export async function handleMessageCreate(
       message.channel.id
     );
 
-    // Freeleech: skip negative messages for protected users
-    if (result.label === "negative" && isFreeleech(message.guild.id)) {
+    // Freerant: skip negative messages for protected users
+    if (result.label === "negative" && isFreerant(message.guild.id)) {
       return;
     }
 

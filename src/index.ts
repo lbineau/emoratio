@@ -14,9 +14,9 @@ import { OllamaSentimentAnalyzer } from "./services/sentiment.js";
 import { OllamaClient } from "./services/ollama.js";
 import { MessageQueue } from "./services/queue.js";
 import { getDb, closeDb } from "./services/database.js";
-import * as vibecheck from "./commands/vibecheck.js";
-import * as leaderboard from "./commands/leaderboard.js";
-import * as freeleech from "./commands/freeleech.js";
+import * as moodcheck from "./commands/moodcheck.js";
+import * as moodboard from "./commands/moodboard.js";
+import * as freerant from "./commands/freerant.js";
 
 // --- Types ---
 interface Command {
@@ -36,9 +36,9 @@ if (!token || !clientId || !guildId) {
 
 // --- Commands ---
 const commands = new Collection<string, Command>();
-commands.set(vibecheck.data.name, vibecheck as Command);
-commands.set(leaderboard.data.name, leaderboard as Command);
-commands.set(freeleech.data.name, freeleech as Command);
+commands.set(moodcheck.data.name, moodcheck as Command);
+commands.set(moodboard.data.name, moodboard as Command);
+commands.set(freerant.data.name, freerant as Command);
 
 // --- Sentiment ---
 const ollamaClient = new OllamaClient();

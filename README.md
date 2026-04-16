@@ -30,10 +30,10 @@ npm start
 
 | Command | Description |
 |---------|-------------|
-| `/vibecheck` | Show your sentiment ratio |
-| `/vibecheck @user` | Show someone else's ratio |
-| `/leaderboard` | Top 10 most positive & negative users |
-| `/freeleech true/false` | Toggle server-wide freeleech — ignores all negative messages (admin only) |
+| `/moodcheck` | Show your sentiment ratio |
+| `/moodcheck @user` | Show someone else's ratio |
+| `/moodboard` | Top 10 most positive & negative users |
+| `/freerant true/false` | Toggle server-wide freerant — ignores all negative messages (admin only) |
 
 ## How It Works
 

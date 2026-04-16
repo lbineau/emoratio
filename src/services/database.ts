@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import path from "node:path";
 import { mkdirSync } from "node:fs";
-import type { SentimentResult, UserStats, LeaderboardEntry } from "../types.js";
+import type { SentimentResult, UserStats, MoodBoardEntry } from "../types.js";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 mkdirSync(DATA_DIR, { recursive: true });
@@ -46,7 +46,7 @@ function migrate(): void {
     CREATE INDEX IF NOT EXISTS idx_messages_user_guild ON messages(user_id, guild_id);
     CREATE INDEX IF NOT EXISTS idx_user_stats_guild ON user_stats(guild_id);
 
-    CREATE TABLE IF NOT EXISTS freeleech (
+    CREATE TABLE IF NOT EXISTS freerant (
       guild_id TEXT NOT NULL PRIMARY KEY,
       enabled_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -95,12 +95,12 @@ export function getUserStats(userId: string, guildId: string): UserStats | undef
   `).get(userId, guildId) as UserStats | undefined;
 }
 
-export function getLeaderboard(
+export function getMoodboard(
   guildId: string,
   order: "best" | "worst",
   limit = 10,
   minMessages = 10
-): LeaderboardEntry[] {
+): MoodBoardEntry[] {
   const d = getDb();
   const orderClause = order === "best" ? "DESC" : "ASC";
 
@@ -116,10 +116,10 @@ export function getLeaderboard(
       AND (positive_count + negative_count + neutral_count) >= ?
     ORDER BY ratio ${orderClause}, total_messages DESC
     LIMIT ?
-  `).all(guildId, minMessages, limit) as LeaderboardEntry[];
+  `).all(guildId, minMessages, limit) as MoodBoardEntry[];
 }
 
-export function getServerVibeScore(guildId: string): { avgScore: number; totalMessages: number } {
+export function getServerMoodScore(guildId: string): { avgScore: number; totalMessages: number } {
   const d = getDb();
   const row = d.prepare(`
     SELECT
@@ -130,23 +130,23 @@ export function getServerVibeScore(guildId: string): { avgScore: number; totalMe
   return row;
 }
 
-export function isFreeleech(guildId: string): boolean {
+export function isFreerant(guildId: string): boolean {
   const d = getDb();
   const row = d.prepare(`
-    SELECT 1 FROM freeleech WHERE guild_id = ?
+    SELECT 1 FROM freerant WHERE guild_id = ?
   `).get(guildId);
   return row !== undefined;
 }
 
-export function setFreeleech(guildId: string, enabled: boolean): void {
+export function setFreerant(guildId: string, enabled: boolean): void {
   const d = getDb();
   if (enabled) {
     d.prepare(`
-      INSERT OR IGNORE INTO freeleech (guild_id) VALUES (?)
+      INSERT OR IGNORE INTO freerant (guild_id) VALUES (?)
     `).run(guildId);
   } else {
     d.prepare(`
-      DELETE FROM freeleech WHERE guild_id = ?
+      DELETE FROM freerant WHERE guild_id = ?
     `).run(guildId);
   }
 }

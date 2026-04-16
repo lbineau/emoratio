@@ -3,15 +3,15 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import { isFreeleech, setFreeleech } from "../services/database.js";
+import { isFreerant, setFreerant } from "../services/database.js";
 
 export const data = new SlashCommandBuilder()
-  .setName("freeleech")
-  .setDescription("Toggle server-wide freeleech (ignores all negative messages)")
+  .setName("freerant")
+  .setDescription("Activer/désactiver le freerant (ignore tous les messages négatifs)")
   .addBooleanOption((option) =>
     option
       .setName("enabled")
-      .setDescription("Enable or disable freeleech")
+      .setDescription("Activer ou désactiver le freerant")
       .setRequired(true)
   )
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
@@ -21,14 +21,14 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
   const guildId = interaction.guildId;
 
   if (!guildId) {
-    await interaction.reply({ content: "Only works in servers.", flags: 64 });
+    await interaction.reply({ content: "Fonctionne uniquement dans un serveur.", flags: 64 });
     return;
   }
 
-  setFreeleech(guildId, enabled);
+  setFreerant(guildId, enabled);
 
-  const status = enabled ? "✅ enabled" : "❌ disabled";
+  const status = enabled ? "✅ activé" : "❌ désactivé";
   await interaction.reply({
-    content: `Server-wide freeleech ${status}. Negative messages ${enabled ? "will be ignored" : "will count again"}.`,
+    content: `Freerant ${status} sur le serveur. Les messages négatifs ${enabled ? "seront ignorés" : "seront comptés à nouveau"}.`,
   });
 }
