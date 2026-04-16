@@ -50,3 +50,7 @@ npm run dev    # Run with tsx (hot reload)
 npm run build  # Build with tsup
 npm start      # Run built version
 ```
+
+## Built With
+
+This project was built with the assistance of LLM-based coding agents.
