@@ -52,15 +52,17 @@ export function buildMoodboardEmbed(
   worst: MoodBoardEntry[],
   serverMood: { avgScore: number; totalMessages: number }
 ): EmbedBuilder {
-  const formatEntry = (e: MoodBoardEntry, i: number) =>
-    `${i + 1}. <@${e.user_id}> — ${(e.ratio * 100).toFixed(1)}% (${e.total_messages} msgs)`;
+  const formatEntry = (e: MoodBoardEntry, i: number, invert = false) => {
+    const pct = (invert ? 1 - e.ratio : e.ratio) * 100;
+    return `${i + 1}. <@${e.user_id}> — ${pct.toFixed(1)}% (✅${e.positive_count} / ❌${e.negative_count} / 😐${e.neutral_count})`;
+  };
 
   const bestList = best.length > 0
-    ? best.map(formatEntry).join("\n")
+    ? best.map((e, i) => formatEntry(e, i, false)).join("\n")
     : "Pas encore assez de données.";
 
   const worstList = worst.length > 0
-    ? worst.map(formatEntry).join("\n")
+    ? worst.map((e, i) => formatEntry(e, i, true)).join("\n")
     : "Pas encore assez de données.";
 
   const serverEmoji = serverMood.avgScore > 0.05 ? "😊" : serverMood.avgScore < -0.05 ? "😠" : "😐";
