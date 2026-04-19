@@ -10,8 +10,7 @@ import {
   type SlashCommandBuilder,
 } from "discord.js";
 import { handleMessageCreate } from "./events/messageCreate.js";
-import { OllamaSentimentAnalyzer } from "./services/sentiment.js";
-import { OllamaClient } from "./services/ollama.js";
+import { TransformersSentimentAnalyzer } from "./services/sentiment.js";
 import { MessageQueue } from "./services/queue.js";
 import { getDb, closeDb } from "./services/database.js";
 import * as moodcheck from "./commands/moodcheck.js";
@@ -41,8 +40,7 @@ commands.set(moodboard.data.name, moodboard as Command);
 commands.set(freerant.data.name, freerant as Command);
 
 // --- Sentiment ---
-const ollamaClient = new OllamaClient();
-const analyzer = new OllamaSentimentAnalyzer(ollamaClient);
+const analyzer = new TransformersSentimentAnalyzer();
 const queue = new MessageQueue(analyzer);
 
 // --- Client ---
@@ -61,17 +59,17 @@ client.once(Events.ClientReady, async (readyClient) => {
   // Init DB
   getDb();
 
-  // Check Ollama
-  const available = await ollamaClient.isAvailable();
-  if (available) {
-    console.log("🧠 Ollama connected");
-  } else {
-    console.warn("⚠️  Ollama not available — sentiment analysis will return neutral");
+  // Load sentiment model
+  try {
+    console.log("🧠 Loading sentiment model...");
+    await analyzer.warmup();
+    console.log("✅ Sentiment model ready");
+  } catch (err) {
+    console.warn("⚠️  Sentiment model failed to load — sentiment will default neutral:", err);
   }
 });
 
 client.on(Events.MessageCreate, (message) => {
-  console.log(`[Event] MessageCreate from ${message.author.tag} | content: "${message.content.substring(0, 50)}" | guild: ${message.guild?.id}`);
   handleMessageCreate(message, queue);
 });
 
